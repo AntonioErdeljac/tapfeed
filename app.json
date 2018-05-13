@@ -1,18 +1,24 @@
 {
   "expo": {
-    "name": "tapfeed",
-    "description": "A very interesting project.",
-    "slug": "tapfeed",
+    "name": "SwipeFeed",
+    "description": "Swipe through most important news.",
+    "slug": "swipe-feed",
     "privacy": "public",
     "sdkVersion": "27.0.0",
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "primaryColor": "#1fcf7c",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1fcf7c"
+    },
+    "android": {
+      "package": "com.swipefeed.android",
+      "permissions": [],
+      "versionCode": 1
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,7 +27,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.swipefeed.android"
     }
   }
 }

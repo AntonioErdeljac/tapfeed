@@ -26,10 +26,27 @@ export default class App extends React.Component {
     Asset.loadAsync([
       require('./assets/images/robot-dev.png'),
       require('./assets/images/robot-prod.png'),
+      require('./assets/images/iconnav.png'),
     ]),
     Font.loadAsync({
       ...Ionicons.font,
       'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+      muli: require('./assets/fonts/Muli-Regular.ttf'),
+      'montserrat-bold': require('./assets/fonts/Montserrat-Bold.ttf'),
+      'montserrat-light': require('./assets/fonts/Montserrat-Light.ttf'),
+      'lato-regular': require('./assets/fonts/Lato-Regular.ttf'),
+      'lato-light': require('./assets/fonts/Lato-Light.ttf'),
+      'muli-regular': require('./assets/fonts/Muli-Regular.ttf'),
+      'nanumgothic-regular': require('./assets/fonts/NanumGothic-Regular.ttf'),
+      'nanumgothic-bold': require('./assets/fonts/NanumGothic-Bold.ttf'),
+      'nanumgothic-extraBold': require('./assets/fonts/NanumGothic-ExtraBold.ttf'),
+      'raleway-regular': require('./assets/fonts/Raleway-Regular.ttf'),
+      'raleway-bold': require('./assets/fonts/Raleway-Bold.ttf'),
+      'nunito-bold': require('./assets/fonts/Nunito-Bold.ttf'),
+      'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf'),
+      Roboto: require('native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      Ionicons: require('@expo/vector-icons/fonts/Ionicons.ttf'),
     }),
   ]);
 
@@ -63,6 +80,10 @@ export default class App extends React.Component {
   }
 }
 
+App.defaultProps = {
+  skipLoadingScreen: false,
+};
+
 App.propTypes = {
-  skipLoadingScreen: PropTypes.bool.isRequired,
+  skipLoadingScreen: PropTypes.bool,
 };
