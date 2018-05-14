@@ -9,6 +9,23 @@ import Layout from '../../../../constants/Layout';
 const FeedCard = (props) => {
   const { cardData } = props;
 
+  let pic = 'https://www.rbs.ca/wp-content/themes/rbs/images/news-placeholder.png';
+
+  if (cardData.enclosure) {
+    if (cardData.enclosure.link) {
+      if (cardData.enclosure.link.length > 0) {
+        pic = cardData.enclosure.link;
+      }
+    } else if (cardData.enclosure.thumbnail) {
+      if (cardData.enclosure.thumbnail.length > 0) {
+        pic = cardData.enclosure.thumbnail;
+      }
+    }
+  }
+
+  const trimmedTitle = cardData.title.substring(0, 100);
+  const trimmedDescription = cardData.description.substring(0, 300);
+
   return (
     <Card style={{
       marginRight: 20,
@@ -19,13 +36,13 @@ const FeedCard = (props) => {
     }}
     >
       <CardItem cardBody>
-        <Image borderTopLeftRadius={10} borderTopRightRadius={10} source={{ uri: cardData.enclosure ? cardData.enclosure.link : 'https://www.rbs.ca/wp-content/themes/rbs/images/news-placeholder.png' }} style={{ height: 200, width: null, flex: 1 }} />
+        <Image borderTopLeftRadius={10} borderTopRightRadius={10} source={{ uri: pic }} style={{ height: 200, width: null, flex: 1 }} />
       </CardItem>
       <CardItem style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
         <Body>
-          <Text style={{ fontFamily: 'nunito-bold', fontSize: 18, marginBottom: 14 }}>{cardData.title}</Text>
+          <Text style={{ fontFamily: 'nunito-bold', fontSize: 18, marginBottom: 14 }}>{trimmedTitle}</Text>
           <Text style={{ fontFamily: 'nunito-regular', fontSize: 13, color: 'rgba(0,0,0,.6)' }}>
-            {cardData.description}
+            {trimmedDescription}
           </Text>
         </Body>
       </CardItem>
