@@ -30,10 +30,30 @@ const Empty = () => (
           textAlign: 'center',
           fontFamily: 'nunito-regular',
           color: 'rgba(0,0,0,.3)',
-          fontSize: 20,
+          fontSize: 25,
+          marginBottom: 20,
         }}
         >
-            Come back later for more!
+          Come back later for more!
+        </Text>
+        <Text style={{
+          textAlign: 'center',
+          fontFamily: 'nunito-regular',
+          color: 'rgba(0,0,0,.3)',
+          fontSize: 12,
+        }}
+        >
+          Want to contact me?
+        </Text>
+
+        <Text style={{
+          textAlign: 'center',
+          fontFamily: 'nunito-regular',
+          color: 'rgba(0,0,0,.3)',
+          fontSize: 12,
+        }}
+        >
+          erdeljacapps@gmail.com
         </Text>
       </View>
     </CardItem>

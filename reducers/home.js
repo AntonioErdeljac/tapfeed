@@ -59,7 +59,7 @@ export default (state = { seenCards: [] }, action) => {
     case 'SET_SAVED':
       return {
         ...state,
-        cards: action.cards,
+        cards: action.cards.reverse(),
       };
     default:
       return state;

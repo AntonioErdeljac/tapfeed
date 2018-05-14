@@ -7,11 +7,12 @@ import {
   AsyncStorage,
   TouchableOpacity,
   ScrollView,
+  BackHandler,
 } from 'react-native';
-import { CardItem, Body, Container, Thumbnail, Left, Text } from 'native-base';
+import { CardItem, Body, Container, Thumbnail, Left, Text, Right } from 'native-base';
 import { WebBrowser } from 'expo';
 import { connect } from 'react-redux';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, Feather } from '@expo/vector-icons';
 import { find } from 'lodash';
 import * as Animatable from 'react-native-animatable';
 
@@ -60,12 +61,32 @@ class HomeScreen extends React.Component {
     this.handleNope = this.handleNope.bind(this);
     this.handleToggleTab = this.handleToggleTab.bind(this);
     this.handleSelectTab = this.handleSelectTab.bind(this);
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
+
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+
 
   componentDidMount() {
     const { onGetCNN } = this.props;
 
     onGetCNN(Agent.CNN.getEdition());
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+
+  handleBackButtonClick() {
+    const { showMenu } = this.state;
+
+    if (showMenu) {
+      return this.menu.fadeOutUp(800)
+        .then(() => this.setState({ showMenu: false }, () => true));
+    }
+    return false;
   }
 
   handleToggleTab() {
@@ -222,7 +243,11 @@ class HomeScreen extends React.Component {
           yupText="Save"
           nopeText="Ignore"
           yupTextStyle={{ color: '#fff', fontFamily: 'nunito-regular' }}
-          yupStyle={{ backgroundColor: '#1fcf7c', borderColor: 'transparent', margin: 30 }}
+          yupStyle={{
+            backgroundColor: '#1fcf7c',
+            borderColor: 'transparent',
+            margin: 30,
+          }}
           nopeTextStyle={{ color: '#fff', fontFamily: 'nunito-regular' }}
           nopeStyle={{ backgroundColor: '#EF4836', borderColor: 'transparent', margin: 30 }}
           showMaybe={false}
