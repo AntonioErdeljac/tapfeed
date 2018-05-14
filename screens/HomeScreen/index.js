@@ -242,6 +242,7 @@ class HomeScreen extends React.Component {
           handleYup={this.handleYup}
           yupText="Save"
           nopeText="Ignore"
+          onClickHandler={() => null}
           yupTextStyle={{ color: '#fff', fontFamily: 'nunito-regular' }}
           yupStyle={{
             backgroundColor: '#1fcf7c',
