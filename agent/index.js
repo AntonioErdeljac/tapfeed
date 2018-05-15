@@ -27,7 +27,7 @@ async function clearSeen(data) {
 }
 
 const CNN = {
-  getEdition: () => axios({
+  feed: () => axios({
     url: RSS.rss2json,
     method: 'GET',
     params: {
@@ -39,7 +39,7 @@ const CNN = {
 };
 
 const BBC = {
-  world: () => axios({
+  feed: () => axios({
     url: RSS.rss2json,
     method: 'GET',
     params: {
@@ -51,7 +51,7 @@ const BBC = {
 };
 
 const washingtonPost = {
-  world: () => axios({
+  feed: () => axios({
     url: RSS.rss2json,
     method: 'GET',
     params: {
@@ -63,7 +63,7 @@ const washingtonPost = {
 };
 
 const independent = {
-  world: () => axios({
+  feed: () => axios({
     url: RSS.rss2json,
     method: 'GET',
     params: {
@@ -74,6 +74,30 @@ const independent = {
   }).then(data => clearSeen(data)),
 };
 
+const techRadar = {
+  feed: () => axios({
+    url: RSS.rss2json,
+    method: 'GET',
+    params: {
+      rss_url: RSS.techRadar,
+      api_key: API.rss2json,
+      count: 100,
+    },
+  }).then(data => clearSeen(data)),
+};
+
+const FIFA = {
+  feed: () => axios({
+    url: RSS.rss2json,
+    method: 'GET',
+    params: {
+      rss_url: RSS.FIFA,
+      api_key: API.rss2json,
+      count: 100,
+    },
+  }).then(data => clearSeen(data)),
+};
+
 export default {
-  CNN, BBC, washingtonPost, independent,
+  CNN, BBC, washingtonPost, independent, techRadar, FIFA,
 };

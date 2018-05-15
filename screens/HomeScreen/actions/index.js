@@ -47,4 +47,18 @@ function getIndependent(payload) {
   };
 }
 
-export { getCNN, saveCard, ignoreCard, loadSaved, getBBC, getWashingtonPost, getIndependent };
+function getTechRadar(payload) {
+  return {
+    type: 'GET_TECH_RADAR',
+    payload,
+  };
+}
+
+function loadFeed(payload) {
+  return {
+    type: 'LOAD_FEED',
+    payload,
+  };
+}
+
+export { getCNN, saveCard, ignoreCard, loadSaved, getBBC, getWashingtonPost, getIndependent, getTechRadar, loadFeed };

@@ -6,19 +6,18 @@ import {
   ActivityIndicator,
   AsyncStorage,
   TouchableOpacity,
-  ScrollView,
   BackHandler,
 } from 'react-native';
-import { CardItem, Body, Container, Thumbnail, Left, Text, Right } from 'native-base';
+import { CardItem, Body, Container, Thumbnail, Left, Text } from 'native-base';
 import { WebBrowser } from 'expo';
 import { connect } from 'react-redux';
-import { Entypo, Feather } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import { find } from 'lodash';
 import * as Animatable from 'react-native-animatable';
 
 
-import { getCNN, saveCard, ignoreCard, loadSaved, getBBC, getWashingtonPost, getIndependent } from './actions';
-import { FeedCard, Empty } from './components';
+import { saveCard, ignoreCard, loadSaved, loadFeed } from './actions';
+import { FeedCard, Empty, Menu } from './components';
 
 import Agent from '../../agent';
 import Layout from '../../constants/Layout';
@@ -27,19 +26,18 @@ import Names from '../../constants/Names';
 const AnimatableThumbnail = Animatable.createAnimatableComponent(Thumbnail);
 
 const styles = {
-  selected: {
-    color: 'rgba(31, 207, 124,1)',
-    fontFamily: 'nunito-bold',
-    fontSize: 30,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  disabled: {
-    color: 'rgba(31, 207, 124, .5)',
-    fontFamily: 'nunito-bold',
-    fontSize: 30,
-    textAlign: 'center',
-    marginBottom: 20,
+  menu: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    flex: 1,
+    zIndex: 100000,
+    height: Layout.window.height,
+    width: Layout.window.width,
+    backgroundColor: 'white',
+    opacity: 0.98,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 };
 
@@ -53,7 +51,7 @@ class HomeScreen extends React.Component {
     super(props);
 
     this.state = {
-      tab: 'trending',
+      tab: 'CNN',
       showMenu: false,
     };
 
@@ -70,9 +68,9 @@ class HomeScreen extends React.Component {
 
 
   componentDidMount() {
-    const { onGetCNN } = this.props;
+    const { onLoadFeed } = this.props;
 
-    onGetCNN(Agent.CNN.getEdition());
+    onLoadFeed(Agent.CNN.feed());
   }
 
   componentWillUnmount() {
@@ -99,65 +97,23 @@ class HomeScreen extends React.Component {
 
   handleSelectTab(tab) {
     const {
-      onGetCNN,
       onLoadSaved,
-      onGetBBC,
-      onGetWashingtonPost,
-      onGetIndependent,
+      onLoadFeed,
     } = this.props;
 
-    if (tab === 'trending') {
-      this.setState({
-        tab: 'trending',
-      }, () => {
-        onGetCNN(Agent.CNN.getEdition());
-        this.menu.fadeOutUp(800)
-          .then(() => {
-            this.setState({
-              showMenu: false,
-            });
-          });
-      });
-    }
 
-    if (tab === 'BBC') {
+    if (tab !== 'saved') {
       this.setState({
-        tab: 'BBC',
+        tab,
       }, () => {
-        onGetBBC(Agent.BBC.world());
-        this.menu.fadeOutUp(800)
+        onLoadFeed(Agent[tab].feed())
           .then(() => {
-            this.setState({
-              showMenu: false,
-            });
-          });
-      });
-    }
-
-    if (tab === 'independent') {
-      this.setState({
-        tab: 'independent',
-      }, () => {
-        onGetIndependent(Agent.independent.world());
-        this.menu.fadeOutUp(800)
-          .then(() => {
-            this.setState({
-              showMenu: false,
-            });
-          });
-      });
-    }
-
-    if (tab === 'washingtonPost') {
-      this.setState({
-        tab: 'washingtonPost',
-      }, () => {
-        onGetWashingtonPost(Agent.washingtonPost.world());
-        this.menu.fadeOutUp(800)
-          .then(() => {
-            this.setState({
-              showMenu: false,
-            });
+            this.menu.fadeOutUp(800)
+              .then(() => {
+                this.setState({
+                  showMenu: false,
+                });
+              });
           });
       });
     }
@@ -294,52 +250,12 @@ class HomeScreen extends React.Component {
           {content}
         </View>
         {showMenu &&
-        <Animatable.View
-          ref={(ref) => { this.menu = ref; }}
-          animation="fadeOutUp"
-          duration={0}
-          style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          flex: 1,
-          zIndex: 100000,
-          height: Layout.window.height,
-          width: Layout.window.width,
-          backgroundColor: 'white',
-          opacity: 0.98,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        >
-          <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
-            <TouchableOpacity onPress={() => this.handleSelectTab('saved')}>
-              <Animatable.Text transition="color" style={tab === 'saved' ? styles.selected : styles.disabled}>
-              Saved
-              </Animatable.Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.handleSelectTab('trending')}>
-              <Animatable.Text transition="color" style={tab === 'trending' ? styles.selected : styles.disabled}>
-              Trending
-              </Animatable.Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.handleSelectTab('BBC')}>
-              <Animatable.Text transition="color" style={tab === 'BBC' ? styles.selected : styles.disabled}>
-              BBC
-              </Animatable.Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.handleSelectTab('washingtonPost')}>
-              <Animatable.Text transition="color" style={tab === 'washingtonPost' ? styles.selected : styles.disabled}>
-              Washington Post
-              </Animatable.Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.handleSelectTab('independent')}>
-              <Animatable.Text transition="color" style={tab === 'independent' ? styles.selected : styles.disabled}>
-              Independent
-              </Animatable.Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </Animatable.View>
+          <Animatable.View
+            ref={(ref) => { this.menu = ref; }}
+            style={styles.menu}
+          >
+            <Menu handleSelectTab={this.handleSelectTab} tab={tab} show={showMenu} />
+          </Animatable.View>
         }
       </Container>
     );
@@ -351,10 +267,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onGetCNN: payload => payload.then(data => dispatch(getCNN(data))),
-  onGetBBC: payload => payload.then(data => dispatch(getBBC(data))),
-  onGetWashingtonPost: payload => payload.then(data => dispatch(getWashingtonPost(data))),
-  onGetIndependent: payload => payload.then(data => dispatch(getIndependent(data))),
+  onLoadFeed: payload => payload.then(data => dispatch(loadFeed(data))),
   onSaveCard: card => dispatch(saveCard(card)),
   onIgnoreCard: card => dispatch(ignoreCard(card)),
   onLoadSaved: cards => dispatch(loadSaved(cards)),
@@ -368,11 +281,8 @@ HomeScreen.propTypes = {
   onLoadSaved: PropTypes.func.isRequired,
   onIgnoreCard: PropTypes.func.isRequired,
   onSaveCard: PropTypes.func.isRequired,
-  onGetCNN: PropTypes.func.isRequired,
   cards: PropTypes.instanceOf(Array),
-  onGetBBC: PropTypes.func.isRequired,
-  onGetWashingtonPost: PropTypes.func.isRequired,
-  onGetIndependent: PropTypes.func.isRequired,
+  onLoadFeed: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

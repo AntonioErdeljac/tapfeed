@@ -5,4 +5,6 @@ export default {
   BBC: 'http://feeds.bbci.co.uk/news/world/rss.xml',
   washingtonPost: 'http://feeds.washingtonpost.com/rss/world',
   independent: 'http://www.independent.co.uk/news/world/rss',
+  techRadar: 'https://www.techradar.com/rss',
+  FIFA: 'http://www.fifa.com/rss/index.xml',
 };
