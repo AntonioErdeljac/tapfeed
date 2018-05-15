@@ -31,6 +31,8 @@ class RootNavigation extends React.Component {
       } else {
         onLoadFeed(Agent.Feed.feed(parsedSavedSource.name));
       }
+    } else {
+      onLoadFeed(Agent.Feed.feed('CNN'));
     }
 
     this._notificationSubscription = this._registerForPushNotifications();

@@ -18,7 +18,7 @@
     "android": {
       "package": "com.swipefeed.android",
       "permissions": [],
-      "versionCode": 2
+      "versionCode": 3
     },
     "updates": {
       "fallbackToCacheTimeout": 0

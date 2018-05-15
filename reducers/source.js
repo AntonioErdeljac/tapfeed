@@ -1,4 +1,4 @@
-export default (state = { source: { type: 'sport', name: 'foxSports' } }, action) => {
+export default (state = { source: { type: 'politics', name: 'CNN' } }, action) => {
   switch (action.type) {
     case 'CHANGE_SOURCE':
       return {

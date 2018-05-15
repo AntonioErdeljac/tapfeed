@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
 
 import changeSource from './actions';
-import { loadFeed, saveCard, loadSaved } from '../HomeScreen/actions';
+import { loadFeed, loadSaved } from '../HomeScreen/actions';
 
 import Names from '../../constants/Names';
 
