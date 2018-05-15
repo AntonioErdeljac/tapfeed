@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   AsyncStorage,
   TouchableOpacity,
-  BackHandler,
 } from 'react-native';
 import { CardItem, Body, Container, Thumbnail, Left, Text } from 'native-base';
 import { WebBrowser } from 'expo';
@@ -17,29 +16,11 @@ import * as Animatable from 'react-native-animatable';
 
 
 import { saveCard, ignoreCard, loadSaved, loadFeed } from './actions';
-import { FeedCard, Empty, Menu } from './components';
+import { FeedCard, Empty } from './components';
 
-import Agent from '../../agent';
-import Layout from '../../constants/Layout';
 import Names from '../../constants/Names';
 
 const AnimatableThumbnail = Animatable.createAnimatableComponent(Thumbnail);
-
-const styles = {
-  menu: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    flex: 1,
-    zIndex: 100000,
-    height: Layout.window.height,
-    width: Layout.window.width,
-    backgroundColor: 'white',
-    opacity: 0.98,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-};
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -50,107 +31,14 @@ class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      tab: 'CNN',
-      showMenu: false,
-    };
-
     this.handleYup = this.handleYup.bind(this);
     this.handleNope = this.handleNope.bind(this);
-    this.handleToggleTab = this.handleToggleTab.bind(this);
-    this.handleSelectTab = this.handleSelectTab.bind(this);
-    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-  }
-
-  componentWillMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-  }
-
-
-  async componentDidMount() {
-    const { onLoadFeed } = this.props;
-
-    const lastTab = await AsyncStorage.getItem('lastTab');
-    if (lastTab) {
-      onLoadFeed(Agent[lastTab].feed());
-      this.setState({
-        tab: lastTab,
-      });
-    } else {
-      onLoadFeed(Agent.CNN.feed());
-    }
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-  }
-
-  handleBackButtonClick() {
-    const { showMenu } = this.state;
-
-    if (showMenu) {
-      return this.menu.fadeOutUp(500)
-        .then(() => this.setState({ showMenu: false }, () => true));
-    }
-    return false;
-  }
-
-  handleToggleTab() {
-    this.setState({
-      showMenu: true,
-    }, () => {
-      this.menu.fadeInDown(500);
-    });
-  }
-
-  handleSelectTab(tab) {
-    const {
-      onLoadSaved,
-      onLoadFeed,
-    } = this.props;
-
-    AsyncStorage.setItem('lastTab', tab);
-
-
-    if (tab !== 'saved') {
-      this.setState({
-        tab,
-      }, () => {
-        onLoadFeed(Agent[tab].feed())
-          .then(() => {
-            this.menu.fadeOutUp(500)
-              .then(() => {
-                this.setState({
-                  showMenu: false,
-                });
-              });
-          });
-      });
-    }
-
-    if (tab === 'saved') {
-      this.setState({
-        tab: 'saved',
-      }, () => {
-        this.menu.fadeOutUp(800)
-          .then(() => {
-            this.setState({
-              showMenu: false,
-            });
-          });
-      });
-      AsyncStorage.getItem('savedCards')
-        .then((savedItems) => {
-          onLoadSaved(JSON.parse(savedItems));
-        });
-    }
   }
 
   async handleYup(card) {
-    const { onSaveCard } = this.props;
-    const { tab } = this.state;
+    const { onSaveCard, source } = this.props;
 
-    if (tab !== 'saved') {
+    if (Names[source.type][source.name].name !== 'saved') {
       const seenCards = await AsyncStorage.getItem('seenCards');
       const parsedSeenCards = JSON.parse(seenCards);
 
@@ -158,7 +46,7 @@ class HomeScreen extends React.Component {
       AsyncStorage.setItem('seenCards', JSON.stringify(updatedSeen));
     }
 
-    if (tab !== 'saved') {
+    if (Names[source.type][source.name].name !== 'saved') {
       this.logo.rotate(500);
       const item = await AsyncStorage.getItem('savedCards');
       if (item) {
@@ -179,10 +67,9 @@ class HomeScreen extends React.Component {
   }
 
   async handleNope(card) {
-    const { onIgnoreCard } = this.props;
-    const { tab } = this.state;
+    const { onIgnoreCard, source } = this.props;
 
-    if (tab === 'saved') {
+    if (Names[source.type][source.name].name === 'Saved') {
       const savedCards = await AsyncStorage.getItem('savedCards');
       const parsedSavedCards = JSON.parse(savedCards);
 
@@ -193,7 +80,7 @@ class HomeScreen extends React.Component {
       AsyncStorage.setItem('savedCards', JSON.stringify(parsedSavedCards));
     }
 
-    if (tab !== 'saved') {
+    if (Names[source.type][source.name].name !== 'Saved') {
       const seenCards = await AsyncStorage.getItem('seenCards');
       const parsedSeenCards = JSON.parse(seenCards);
 
@@ -205,8 +92,7 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const { cards } = this.props;
-    const { tab, showMenu } = this.state;
+    const { cards, source } = this.props;
 
     let content = <ActivityIndicator size="large" color="#1fcf7c" />;
 
@@ -217,8 +103,8 @@ class HomeScreen extends React.Component {
           renderCard={cardData => <FeedCard cardData={cardData} />}
           handleNope={this.handleNope}
           handleYup={this.handleYup}
-          yupText={tab !== 'saved' ? 'Save' : 'Keep'}
-          nopeText={tab !== 'saved' ? 'Ignore' : 'Remove'}
+          yupText={source.name !== 'saved' ? 'Save' : 'Keep'}
+          nopeText={source.name !== 'saved' ? 'Ignore' : 'Remove'}
           onClickHandler={() => null}
           yupTextStyle={{ color: '#fff', fontFamily: 'nunito-regular' }}
           yupStyle={{
@@ -231,7 +117,7 @@ class HomeScreen extends React.Component {
           showMaybe={false}
           handleMaybe={card => WebBrowser.openBrowserAsync(card.link)}
           hasMaybeAction
-          loop={tab === 'saved'}
+          loop={false}
           renderNoMoreCards={() => <Empty />}
         />
       );
@@ -243,9 +129,9 @@ class HomeScreen extends React.Component {
           <Left>
             <AnimatableThumbnail ref={(ref) => { this.logo = ref; }} source={require('../../assets/images/iconnav.png')} />
             <Body>
-              <TouchableOpacity onPress={() => this.handleToggleTab()}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('Feed')}>
                 <Text style={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontSize: 25 }}>
-                  {Names[tab]}&nbsp;
+                  {Names[source.type][source.name].name}&nbsp;
                   <Entypo
                     name="chevron-down"
                     size={20}
@@ -268,14 +154,6 @@ class HomeScreen extends React.Component {
         <View style={{ flex: 1 }}>
           {content}
         </View>
-        {showMenu &&
-          <Animatable.View
-            ref={(ref) => { this.menu = ref; }}
-            style={styles.menu}
-          >
-            <Menu handleSelectTab={this.handleSelectTab} tab={tab} show={showMenu} />
-          </Animatable.View>
-        }
       </Container>
     );
   }
@@ -283,6 +161,7 @@ class HomeScreen extends React.Component {
 
 const mapStateToProps = state => ({
   cards: state.home.cards,
+  source: state.source.source,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -297,11 +176,10 @@ HomeScreen.defaultProps = {
 };
 
 HomeScreen.propTypes = {
-  onLoadSaved: PropTypes.func.isRequired,
+  source: PropTypes.shape({}).isRequired,
   onIgnoreCard: PropTypes.func.isRequired,
   onSaveCard: PropTypes.func.isRequired,
   cards: PropTypes.instanceOf(Array),
-  onLoadFeed: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

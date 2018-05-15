@@ -26,12 +26,12 @@ async function clearSeen(data) {
   return data;
 }
 
-const CNN = {
-  feed: () => axios({
+const Feed = {
+  feed: name => axios({
     url: RSS.rss2json,
     method: 'GET',
     params: {
-      rss_url: RSS.cnnEdition,
+      rss_url: RSS[name],
       api_key: API.rss2json,
       count: 100,
     },
@@ -98,6 +98,18 @@ const FIFA = {
   }).then(data => clearSeen(data)),
 };
 
+const businessWire = {
+  feed: () => axios({
+    url: RSS.rss2json,
+    method: 'GET',
+    params: {
+      rss_url: RSS.businessWire,
+      api_key: API.rss2json,
+      count: 100,
+    },
+  }).then(data => clearSeen(data)),
+};
+
 export default {
-  CNN, BBC, washingtonPost, independent, techRadar, FIFA,
+  BBC, washingtonPost, independent, techRadar, FIFA, businessWire, Feed,
 };

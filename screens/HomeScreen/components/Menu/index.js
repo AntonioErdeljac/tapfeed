@@ -3,8 +3,13 @@ import React from 'react';
 import {
   TouchableOpacity,
   ScrollView,
+  View,
 } from 'react-native';
+import { Container, Content } from 'native-base';
 import * as Animatable from 'react-native-animatable';
+import Names from '../../../../constants/Names';
+import Layout from '../../../../constants/Layout';
+
 
 const styles = {
   selected: {
@@ -27,45 +32,26 @@ class Menu extends React.Component {
   render() {
     const { tab, handleSelectTab } = this.props;
 
+    const list = Object.keys(Names).map(name => (
+      <TouchableOpacity key={name} onPress={() => handleSelectTab(name)}>
+        <Animatable.Text transition="color" style={tab === name ? styles.selected : styles.disabled}>
+          {Names[name]}
+        </Animatable.Text>
+      </TouchableOpacity>
+    ));
 
     const content = (
-      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
-        <TouchableOpacity onPress={() => handleSelectTab('saved')}>
-          <Animatable.Text transition="color" style={tab === 'saved' ? styles.selected : styles.disabled}>
-              Saved
-          </Animatable.Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleSelectTab('CNN')}>
-          <Animatable.Text transition="color" style={tab === 'CNN' ? styles.selected : styles.disabled}>
-              CNN
-          </Animatable.Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleSelectTab('BBC')}>
-          <Animatable.Text transition="color" style={tab === 'BBC' ? styles.selected : styles.disabled}>
-              BBC
-          </Animatable.Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleSelectTab('washingtonPost')}>
-          <Animatable.Text transition="color" style={tab === 'washingtonPost' ? styles.selected : styles.disabled}>
-              Washington Post
-          </Animatable.Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleSelectTab('independent')}>
-          <Animatable.Text transition="color" style={tab === 'independent' ? styles.selected : styles.disabled}>
-              Independent
-          </Animatable.Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleSelectTab('techRadar')}>
-          <Animatable.Text transition="color" style={tab === 'techRadar' ? styles.selected : styles.disabled}>
-              TechRadar
-          </Animatable.Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleSelectTab('FIFA')}>
-          <Animatable.Text transition="color" style={tab === 'FIFA' ? styles.selected : styles.disabled}>
-              FIFA
-          </Animatable.Text>
-        </TouchableOpacity>
-      </ScrollView>
+      <View style={{ flex: 1, height: Layout.window.height }}>
+        <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => handleSelectTab('saved')}>
+            <Animatable.Text transition="color" style={tab === 'saved' ? styles.selected : styles.disabled}>
+            Saved
+            </Animatable.Text>
+          </TouchableOpacity>
+          {list}
+          {list}
+        </ScrollView>
+      </View>
     );
 
 

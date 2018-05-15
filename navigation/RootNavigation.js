@@ -1,16 +1,38 @@
 import React from 'react';
+import { AsyncStorage } from 'react-native';
+import { connect } from 'react-redux';
 import { Notifications } from 'expo';
 import { createSwitchNavigator } from 'react-navigation';
 
 import MainTabNavigator from './MainTabNavigator';
+
+import Agent from '../agent';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
+
+import changeSource from '../screens/LinksScreen/actions';
+import { loadFeed, loadSaved } from '../screens/HomeScreen/actions';
 
 const AppNavigator = createSwitchNavigator({
   Main: MainTabNavigator,
 });
 
-export default class RootNavigation extends React.Component {
-  componentDidMount() {
+class RootNavigation extends React.Component {
+  async componentDidMount() {
+    const { onChangeSource, onLoadFeed, onLoadSaved } = this.props;
+    const savedSource = await AsyncStorage.getItem('savedSource');
+    const parsedSavedSource = JSON.parse(savedSource);
+
+    if (parsedSavedSource) {
+      onChangeSource(parsedSavedSource);
+
+      if (parsedSavedSource.name === 'saved') {
+        const savedCards = await AsyncStorage.getItem('savedCards');
+        onLoadSaved(JSON.parse(savedCards));
+      } else {
+        onLoadFeed(Agent.Feed.feed(parsedSavedSource.name));
+      }
+    }
+
     this._notificationSubscription = this._registerForPushNotifications();
   }
 
@@ -39,3 +61,11 @@ export default class RootNavigation extends React.Component {
     return <AppNavigator />;
   }
 }
+
+const mapDispatchToProps = dispatch => ({
+  onChangeSource: source => dispatch(changeSource(source)),
+  onLoadFeed: payload => payload.then(data => dispatch(loadFeed(data))),
+  onLoadSaved: cards => dispatch(loadSaved(cards)),
+});
+
+export default connect(null, mapDispatchToProps)(RootNavigation);
