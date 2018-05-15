@@ -28,28 +28,29 @@ const FeedCard = (props) => {
 
   return (
     <Card style={{
-      marginRight: 20,
-      marginLeft: 20,
-      borderRadius: 10,
+      marginRight: 30,
+      marginLeft: 30,
+      borderRadius: 20,
       elevation: 1,
-      width: Layout.window.width - 20,
+      width: Layout.window.width - 50,
+      marginBottom: 30,
     }}
     >
       <CardItem cardBody>
-        <Image borderTopLeftRadius={10} borderTopRightRadius={10} source={{ uri: pic }} style={{ height: 200, width: null, flex: 1 }} />
+        <Image borderTopLeftRadius={20} borderTopRightRadius={20} source={{ uri: pic }} style={{ height: 200, width: null, flex: 1 }} />
       </CardItem>
-      <CardItem style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+      <CardItem style={{ borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}>
         <Body>
-          <Text style={{ fontFamily: 'nunito-bold', fontSize: 18, marginBottom: 14 }}>{trimmedTitle}</Text>
-          <Text style={{ fontFamily: 'nunito-regular', fontSize: 13, color: 'rgba(0,0,0,.6)' }}>
+          <Text style={{ fontFamily: 'nunito-bold', fontSize: 16, marginBottom: 14 }}>{trimmedTitle}</Text>
+          <Text style={{ fontFamily: 'nunito-regular', fontSize: 11, color: 'rgba(0,0,0,.6)' }}>
             {trimmedDescription}
           </Text>
         </Body>
       </CardItem>
       <CardItem
         style={{
-          borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10,
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
           flex: 1,
           flexDirection: 'row',
           justifyContent: 'flex-end',

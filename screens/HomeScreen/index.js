@@ -12,7 +12,7 @@ import { CardItem, Body, Container, Thumbnail, Left, Text } from 'native-base';
 import { WebBrowser } from 'expo';
 import { connect } from 'react-redux';
 import { Entypo } from '@expo/vector-icons';
-import { find } from 'lodash';
+import { find, remove } from 'lodash';
 import * as Animatable from 'react-native-animatable';
 
 
@@ -67,10 +67,18 @@ class HomeScreen extends React.Component {
   }
 
 
-  componentDidMount() {
+  async componentDidMount() {
     const { onLoadFeed } = this.props;
 
-    onLoadFeed(Agent.CNN.feed());
+    const lastTab = await AsyncStorage.getItem('lastTab');
+    if (lastTab) {
+      onLoadFeed(Agent[lastTab].feed());
+      this.setState({
+        tab: lastTab,
+      });
+    } else {
+      onLoadFeed(Agent.CNN.feed());
+    }
   }
 
   componentWillUnmount() {
@@ -81,7 +89,7 @@ class HomeScreen extends React.Component {
     const { showMenu } = this.state;
 
     if (showMenu) {
-      return this.menu.fadeOutUp(800)
+      return this.menu.fadeOutUp(500)
         .then(() => this.setState({ showMenu: false }, () => true));
     }
     return false;
@@ -91,7 +99,7 @@ class HomeScreen extends React.Component {
     this.setState({
       showMenu: true,
     }, () => {
-      this.menu.fadeInDown(800);
+      this.menu.fadeInDown(500);
     });
   }
 
@@ -101,6 +109,8 @@ class HomeScreen extends React.Component {
       onLoadFeed,
     } = this.props;
 
+    AsyncStorage.setItem('lastTab', tab);
+
 
     if (tab !== 'saved') {
       this.setState({
@@ -108,7 +118,7 @@ class HomeScreen extends React.Component {
       }, () => {
         onLoadFeed(Agent[tab].feed())
           .then(() => {
-            this.menu.fadeOutUp(800)
+            this.menu.fadeOutUp(500)
               .then(() => {
                 this.setState({
                   showMenu: false,
@@ -172,6 +182,17 @@ class HomeScreen extends React.Component {
     const { onIgnoreCard } = this.props;
     const { tab } = this.state;
 
+    if (tab === 'saved') {
+      const savedCards = await AsyncStorage.getItem('savedCards');
+      const parsedSavedCards = JSON.parse(savedCards);
+
+      remove(parsedSavedCards, {
+        link: card.link,
+      });
+
+      AsyncStorage.setItem('savedCards', JSON.stringify(parsedSavedCards));
+    }
+
     if (tab !== 'saved') {
       const seenCards = await AsyncStorage.getItem('seenCards');
       const parsedSeenCards = JSON.parse(seenCards);
@@ -196,8 +217,8 @@ class HomeScreen extends React.Component {
           renderCard={cardData => <FeedCard cardData={cardData} />}
           handleNope={this.handleNope}
           handleYup={this.handleYup}
-          yupText="Save"
-          nopeText="Ignore"
+          yupText={tab !== 'saved' ? 'Save' : 'Keep'}
+          nopeText={tab !== 'saved' ? 'Ignore' : 'Remove'}
           onClickHandler={() => null}
           yupTextStyle={{ color: '#fff', fontFamily: 'nunito-regular' }}
           yupStyle={{
@@ -208,8 +229,6 @@ class HomeScreen extends React.Component {
           nopeTextStyle={{ color: '#fff', fontFamily: 'nunito-regular' }}
           nopeStyle={{ backgroundColor: '#EF4836', borderColor: 'transparent', margin: 30 }}
           showMaybe={false}
-          showYup={tab !== 'saved'}
-          showNope={tab !== 'saved'}
           handleMaybe={card => WebBrowser.openBrowserAsync(card.link)}
           hasMaybeAction
           loop={tab === 'saved'}
