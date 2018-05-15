@@ -20,6 +20,14 @@ const FeedCard = (props) => {
       if (cardData.enclosure.thumbnail.length > 0) {
         pic = cardData.enclosure.thumbnail;
       }
+    } else if (cardData.thumbnail) {
+      if (cardData.thumbnail.length > 0) {
+        pic = cardData.thumbnail;
+      }
+    }
+  } else if (cardData.thumbnail) {
+    if (cardData.thumbnail.length > 0) {
+      pic = cardData.thumbnail;
     }
   }
 

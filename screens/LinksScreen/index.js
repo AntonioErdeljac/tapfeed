@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { CardItem, Body, Container, Thumbnail, Left, Text, Tabs, Tab, ScrollableTab, Content, Card } from 'native-base';
 import { connect } from 'react-redux';
+import { Entypo } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 
 import changeSource from './actions';
@@ -78,7 +79,13 @@ class LinksScreen extends React.Component {
             <Body>
               <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')}>
                 <Text style={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontSize: 25 }}>
-                  Pick a source
+                  Pick a source&nbsp;
+                  <Entypo
+                    name="chevron-up"
+                    size={20}
+                    style={{ paddingLeft: 10 }}
+                    color="#1fcf7c"
+                  />
                 </Text>
               </TouchableOpacity>
               <Text style={{
@@ -87,7 +94,7 @@ class LinksScreen extends React.Component {
                 fontSize: 14,
               }}
               >
-                12 sources
+                Updated every week
               </Text>
             </Body>
           </Left>
@@ -100,7 +107,7 @@ class LinksScreen extends React.Component {
           }}
           />)}
         >
-          <Tab tabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTabStyle={{ backgroundColor: '#fff', borderColor: '#1fcf7c' }} activeTextStyle={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontWeight: 'normal' }} textStyle={{ color: '#1fcf7c', fontFamily: 'nunito-regular' }} heading="Sport">
+          <Tab tabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTextStyle={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontWeight: 'normal' }} textStyle={{ color: '#1fcf7c', fontFamily: 'nunito-regular' }} heading="Sport">
             <Content>
               <Card style={{ elevation: 0, borderColor: '#fff' }}>
                 {Object.keys(Names.sport).map(feed => (
@@ -113,42 +120,50 @@ class LinksScreen extends React.Component {
             </Content>
           </Tab>
           <Tab tabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTextStyle={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontWeight: 'normal' }} textStyle={{ color: '#1fcf7c', fontFamily: 'nunito-regular' }} heading="Politics">
-            <Card style={{ elevation: 0, borderColor: '#fff' }}>
-              {Object.keys(Names.politics).map(feed => (
-                <CardItem button onPress={() => this.handleSourceChange({ type: 'politics', name: `${feed}` })} key={Names.politics[feed].name} style={{ elevation: 0, borderColor: '#fff' }}>
-                  <Thumbnail source={{ uri: Names.politics[feed].img }} />
-                  <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{Names.politics[feed].name}</Text>
-                </CardItem>
+            <Content>
+              <Card style={{ elevation: 0, borderColor: '#fff' }}>
+                {Object.keys(Names.politics).map(feed => (
+                  <CardItem button onPress={() => this.handleSourceChange({ type: 'politics', name: `${feed}` })} key={Names.politics[feed].name} style={{ elevation: 0, borderColor: '#fff' }}>
+                    <Thumbnail source={{ uri: Names.politics[feed].img }} />
+                    <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{Names.politics[feed].name}</Text>
+                  </CardItem>
               ))}
-            </Card>
+              </Card>
+            </Content>
           </Tab>
           <Tab tabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTextStyle={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontWeight: 'normal' }} textStyle={{ color: '#1fcf7c', fontFamily: 'nunito-regular' }} heading="Technology">
-            <Card style={{ elevation: 0, borderColor: '#fff' }}>
-              {Object.keys(Names.technology).map(feed => (
-                <CardItem button onPress={() => this.handleSourceChange({ type: 'technology', name: `${feed}` })} key={Names.technology[feed].name} style={{ elevation: 0, borderColor: '#fff' }}>
-                  <Thumbnail source={{ uri: Names.technology[feed].img }} />
-                  <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{Names.technology[feed].name}</Text>
-                </CardItem>
+            <Content>
+              <Card style={{ elevation: 0, borderColor: '#fff' }}>
+                {Object.keys(Names.technology).map(feed => (
+                  <CardItem button onPress={() => this.handleSourceChange({ type: 'technology', name: `${feed}` })} key={Names.technology[feed].name} style={{ elevation: 0, borderColor: '#fff' }}>
+                    <Thumbnail source={{ uri: Names.technology[feed].img }} />
+                    <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{Names.technology[feed].name}</Text>
+                  </CardItem>
               ))}
-            </Card>
+              </Card>
+            </Content>
           </Tab>
           <Tab tabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTextStyle={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontWeight: 'normal' }} textStyle={{ color: '#1fcf7c', fontFamily: 'nunito-regular' }} heading="Entertainment">
-            <Card style={{ elevation: 0, borderColor: '#fff' }}>
-              {Object.keys(Names.entertainment).map(feed => (
-                <CardItem button onPress={() => this.handleSourceChange({ type: 'entertainment', name: `${feed}` })} key={Names.entertainment[feed].name} style={{ elevation: 0, borderColor: '#fff' }}>
-                  <Thumbnail source={{ uri: Names.entertainment[feed].img }} />
-                  <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{Names.entertainment[feed].name}</Text>
-                </CardItem>
+            <Content>
+              <Card style={{ elevation: 0, borderColor: '#fff' }}>
+                {Object.keys(Names.entertainment).map(feed => (
+                  <CardItem button onPress={() => this.handleSourceChange({ type: 'entertainment', name: `${feed}` })} key={Names.entertainment[feed].name} style={{ elevation: 0, borderColor: '#fff' }}>
+                    <Thumbnail source={{ uri: Names.entertainment[feed].img }} />
+                    <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{Names.entertainment[feed].name}</Text>
+                  </CardItem>
               ))}
-            </Card>
+              </Card>
+            </Content>
           </Tab>
           <Tab tabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTabStyle={{ backgroundColor: '#fff', borderColor: '#fff' }} activeTextStyle={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontWeight: 'normal' }} textStyle={{ color: '#1fcf7c', fontFamily: 'nunito-regular' }} heading="Custom">
-            <Card style={{ elevation: 0, borderColor: '#fff' }}>
-              <CardItem button onPress={() => this.handleSourceChange({ type: 'custom', name: 'saved' })} key="saved" style={{ elevation: 0, borderColor: '#fff' }}>
-                <Thumbnail source={require('../../assets/images/iconnav.png')} />
-                <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>Saved</Text>
-              </CardItem>
-            </Card>
+            <Content>
+              <Card style={{ elevation: 0, borderColor: '#fff' }}>
+                <CardItem button onPress={() => this.handleSourceChange({ type: 'custom', name: 'saved' })} key="saved" style={{ elevation: 0, borderColor: '#fff' }}>
+                  <Thumbnail source={require('../../assets/images/iconnav.png')} />
+                  <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>Saved</Text>
+                </CardItem>
+              </Card>
+            </Content>
           </Tab>
         </Tabs>
       </Container>
