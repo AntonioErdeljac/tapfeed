@@ -100,7 +100,7 @@ class HomeScreen extends React.Component {
       content = (
         <SwipeCards
           cards={cards}
-          renderCard={cardData => <FeedCard cardData={cardData} />}
+          renderCard={cardData => <FeedCard cardData={cardData} sourceType={source.type} />}
           handleNope={this.handleNope}
           handleYup={this.handleYup}
           yupText={source.name !== 'saved' ? 'Save' : 'Keep'}
@@ -112,6 +112,7 @@ class HomeScreen extends React.Component {
             borderColor: 'transparent',
             margin: 30,
           }}
+          smoothTransition
           nopeTextStyle={{ color: '#fff', fontFamily: 'nunito-regular' }}
           nopeStyle={{ backgroundColor: '#EF4836', borderColor: 'transparent', margin: 30 }}
           showMaybe={false}
@@ -180,6 +181,9 @@ HomeScreen.propTypes = {
   onIgnoreCard: PropTypes.func.isRequired,
   onSaveCard: PropTypes.func.isRequired,
   cards: PropTypes.instanceOf(Array),
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

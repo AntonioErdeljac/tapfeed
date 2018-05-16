@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { View, Image, Text } from 'react-native';
-import { CardItem, Body, Card } from 'native-base';
+import { CardItem, Body, Card, Badge, Thumbnail, Left } from 'native-base';
 import { Entypo } from '@expo/vector-icons';
 
 import Layout from '../../../../constants/Layout';
 
 const FeedCard = (props) => {
-  const { cardData } = props;
+  const { cardData, sourceType } = props;
 
   let pic = 'https://www.rbs.ca/wp-content/themes/rbs/images/news-placeholder.png';
 
@@ -31,8 +31,25 @@ const FeedCard = (props) => {
     }
   }
 
+  const additionalContent = cardData.author
+    ? (
+      <CardItem>
+        <Thumbnail style={{ height: 20, width: 20 }} source={require('../../../../assets/images/author.png')} />
+        <Text style={{
+          fontFamily: 'nunito-regular',
+          fontSize: 13,
+          marginLeft: 10,
+          color: 'rgba(0,0,0,.3)',
+        }}
+        >{cardData.author.split(' ')[0]}
+        </Text>
+      </CardItem>
+    ) : null;
+
   const trimmedTitle = cardData.title.substring(0, 100).replace(/<\/?[^>]+(>|$)/g, '');
-  const trimmedDescription = cardData.description.substring(0, 300).replace(/<\/?[^>]+(>|$)/g, '');
+  const trimmedDescription = cardData.description && cardData.description.length < 180
+    ? cardData.description.replace(/<\/?[^>]+(>|$)/g, '')
+    : `${cardData.description.substring(0, 180).replace(/<\/?[^>]+(>|$)/g, '')}...`;
 
   return (
     <Card style={{
@@ -55,6 +72,7 @@ const FeedCard = (props) => {
           </Text>
         </Body>
       </CardItem>
+      {additionalContent}
       <CardItem
         style={{
           borderBottomLeftRadius: 20,
@@ -81,6 +99,7 @@ const FeedCard = (props) => {
 
 FeedCard.propTypes = {
   cardData: PropTypes.shape({}).isRequired,
+  sourceType: PropTypes.string.isRequired,
 };
 
 export default FeedCard;

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {
   TouchableOpacity,
@@ -13,6 +14,7 @@ import changeSource from './actions';
 import { loadFeed, loadSaved } from '../HomeScreen/actions';
 
 import Names from '../../constants/Names';
+import TabsPosition from '../../constants/TabsPosition';
 
 import Agent from '../../agent';
 
@@ -27,12 +29,24 @@ class LinksScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      activePage: 0,
+    };
+
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleSourceChange = this.handleSourceChange.bind(this);
   }
 
   componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+
+  componentDidMount() {
+    const { source } = this.props;
+
+    setTimeout(() => {
+      this.setState({ activePage: TabsPosition[source.type] });
+    }, 0);
   }
 
   componentWillUnmount() {
@@ -71,6 +85,9 @@ class LinksScreen extends React.Component {
   }
 
   render() {
+    const { source } = this.props;
+    const { activePage } = this.state;
+
     return (
       <Container style={{ paddingTop: 20, backgroundColor: '#fff' }}>
         <CardItem>
@@ -100,6 +117,7 @@ class LinksScreen extends React.Component {
           </Left>
         </CardItem>
         <Tabs
+          page={activePage}
           tabBarUnderlineStyle={{ borderBottomColor: '#fff', elevation: 0, borderBottomWidth: 0 }}
           style={{ borderBottomWidth: 0, borderBottomColor: '#fff', elevation: 0 }}
           renderTabBar={() => (<ScrollableTab style={{
@@ -171,10 +189,23 @@ class LinksScreen extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  source: state.source.source,
+});
+
 const mapDispatchToProps = dispatch => ({
   onChangeSource: source => dispatch(changeSource(source)),
   onLoadFeed: payload => payload.then(data => dispatch(loadFeed(data))),
   onLoadSaved: cards => dispatch(loadSaved(cards)),
 });
 
-export default connect(null, mapDispatchToProps)(LinksScreen);
+LinksScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  onLoadFeed: PropTypes.func.isRequired,
+  onChangeSource: PropTypes.func.isRequired,
+  onLoadSaved: PropTypes.func.isRequired,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LinksScreen);
