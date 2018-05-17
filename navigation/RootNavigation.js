@@ -9,6 +9,9 @@ import MainTabNavigator from './MainTabNavigator';
 import Agent from '../agent';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
+import Names from '../constants/Names';
+
+
 import changeSource from '../screens/LinksScreen/actions';
 import { loadFeed, loadSaved } from '../screens/HomeScreen/actions';
 
@@ -25,11 +28,15 @@ class RootNavigation extends React.Component {
     if (parsedSavedSource) {
       onChangeSource(parsedSavedSource);
 
-      if (parsedSavedSource.name === 'saved') {
-        const savedCards = await AsyncStorage.getItem('savedCards');
-        onLoadSaved(JSON.parse(savedCards));
+      if (Names[parsedSavedSource.type][parsedSavedSource.name]) {
+        if (parsedSavedSource.name === 'saved') {
+          const savedCards = await AsyncStorage.getItem('savedCards');
+          onLoadSaved(JSON.parse(savedCards));
+        } else {
+          onLoadFeed(Agent.Feed.feed(parsedSavedSource.name));
+        }
       } else {
-        onLoadFeed(Agent.Feed.feed(parsedSavedSource.name));
+        onLoadFeed(Agent.CustomFeed.feed(parsedSavedSource.url));
       }
     } else {
       onLoadFeed(Agent.Feed.feed('CNN'));

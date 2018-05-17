@@ -46,7 +46,7 @@ const FeedCard = (props) => {
       </CardItem>
     ) : null;
 
-  const trimmedTitle = cardData.title.substring(0, 100).replace(/<\/?[^>]+(>|$)/g, '');
+  const trimmedTitle = cardData.title.substring(0, 80).replace(/<\/?[^>]+(>|$)/g, '');
   const trimmedDescription = cardData.description && cardData.description.length < 180
     ? cardData.description.replace(/<\/?[^>]+(>|$)/g, '')
     : `${cardData.description.substring(0, 180).replace(/<\/?[^>]+(>|$)/g, '')}...`;

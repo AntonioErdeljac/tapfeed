@@ -38,15 +38,33 @@ class HomeScreen extends React.Component {
   async handleYup(card) {
     const { onSaveCard, source } = this.props;
 
-    if (Names[source.type][source.name].name !== 'saved') {
-      const seenCards = await AsyncStorage.getItem('seenCards');
-      const parsedSeenCards = JSON.parse(seenCards);
+    if (Names[source.type][source.name]) {
+      if (Names[source.type][source.name].name !== 'saved') {
+        const seenCards = await AsyncStorage.getItem('seenCards');
+        const parsedSeenCards = JSON.parse(seenCards);
 
-      const updatedSeen = (parsedSeenCards || []).concat(card);
-      AsyncStorage.setItem('seenCards', JSON.stringify(updatedSeen));
-    }
+        const updatedSeen = (parsedSeenCards || []).concat(card);
+        AsyncStorage.setItem('seenCards', JSON.stringify(updatedSeen));
+      }
 
-    if (Names[source.type][source.name].name !== 'saved') {
+      if (Names[source.type][source.name].name !== 'saved') {
+        this.logo.rotate(500);
+        const item = await AsyncStorage.getItem('savedCards');
+        if (item) {
+          const parsedItem = JSON.parse(item);
+          const alreadyExists = find(parsedItem, { link: card.link });
+          if (!alreadyExists) {
+            const updatedSaved = (JSON.parse(item) || []).concat([card]);
+            return AsyncStorage.setItem('savedCards', JSON.stringify(updatedSaved))
+              .then(() => onSaveCard(card));
+          }
+          return onSaveCard(card);
+        }
+        const updatedSaved = (JSON.parse(item) || []).concat([card]);
+        return AsyncStorage.setItem('savedCards', JSON.stringify(updatedSaved))
+          .then(() => onSaveCard(card));
+      }
+    } else {
       this.logo.rotate(500);
       const item = await AsyncStorage.getItem('savedCards');
       if (item) {
@@ -69,18 +87,26 @@ class HomeScreen extends React.Component {
   async handleNope(card) {
     const { onIgnoreCard, source } = this.props;
 
-    if (Names[source.type][source.name].name === 'Saved') {
-      const savedCards = await AsyncStorage.getItem('savedCards');
-      const parsedSavedCards = JSON.parse(savedCards);
+    if (Names[source.type][source.name]) {
+      if (Names[source.type][source.name].name === 'Saved') {
+        const savedCards = await AsyncStorage.getItem('savedCards');
+        const parsedSavedCards = JSON.parse(savedCards);
 
-      remove(parsedSavedCards, {
-        link: card.link,
-      });
+        remove(parsedSavedCards, {
+          link: card.link,
+        });
 
-      AsyncStorage.setItem('savedCards', JSON.stringify(parsedSavedCards));
-    }
+        AsyncStorage.setItem('savedCards', JSON.stringify(parsedSavedCards));
+      }
 
-    if (Names[source.type][source.name].name !== 'Saved') {
+      if (Names[source.type][source.name].name !== 'Saved') {
+        const seenCards = await AsyncStorage.getItem('seenCards');
+        const parsedSeenCards = JSON.parse(seenCards);
+
+        const updatedSeen = (parsedSeenCards || []).concat(card);
+        AsyncStorage.setItem('seenCards', JSON.stringify(updatedSeen));
+      }
+    } else {
       const seenCards = await AsyncStorage.getItem('seenCards');
       const parsedSeenCards = JSON.parse(seenCards);
 
@@ -132,7 +158,7 @@ class HomeScreen extends React.Component {
             <Body>
               <TouchableOpacity onPress={() => this.props.navigation.navigate('Feed')}>
                 <Text style={{ color: '#1fcf7c', fontFamily: 'nunito-bold', fontSize: 25 }}>
-                  {Names[source.type][source.name].name}&nbsp;
+                  {Names[source.type][source.name] ? Names[source.type][source.name].name : source.name}&nbsp;
                   <Entypo
                     name="chevron-down"
                     size={20}

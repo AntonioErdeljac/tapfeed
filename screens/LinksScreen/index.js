@@ -1,3 +1,4 @@
+import ActionButton from 'react-native-action-button';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
@@ -11,7 +12,7 @@ import { Entypo } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 
 import changeSource from './actions';
-import { loadFeed, loadSaved } from '../HomeScreen/actions';
+import { loadFeed, loadSaved, saveCard } from '../HomeScreen/actions';
 
 import Names from '../../constants/Names';
 import TabsPosition from '../../constants/TabsPosition';
@@ -31,18 +32,27 @@ class LinksScreen extends React.Component {
 
     this.state = {
       activePage: 0,
+      customSources: [],
     };
 
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleSourceChange = this.handleSourceChange.bind(this);
+    this.handleCustomSourceChange = this.handleCustomSourceChange.bind(this);
   }
 
   componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { source } = this.props;
+
+    const savedSources = await AsyncStorage.getItem('savedSources');
+    const parsedSavedSources = JSON.parse(savedSources);
+
+    this.setState({
+      customSources: parsedSavedSources,
+    });
 
     setTimeout(() => {
       this.setState({ activePage: TabsPosition[source.type] });
@@ -84,9 +94,25 @@ class LinksScreen extends React.Component {
       });
   }
 
+  handleCustomSourceChange(source) {
+    const {
+      onLoadFeed,
+      onChangeSource,
+      navigation,
+    } = this.props;
+
+
+    return AsyncStorage.setItem('savedSource', JSON.stringify(source))
+      .then(async () => onLoadFeed(Agent.CustomFeed.feed(source.url))
+        .then(() => {
+          onChangeSource(source);
+          navigation.navigate('Home');
+        }));
+  }
+
   render() {
-    const { source } = this.props;
-    const { activePage } = this.state;
+    const { source, navigation } = this.props;
+    const { activePage, customSources } = this.state;
 
     return (
       <Container style={{ paddingTop: 20, backgroundColor: '#fff' }}>
@@ -181,9 +207,19 @@ class LinksScreen extends React.Component {
                   <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>Saved</Text>
                 </CardItem>
               </Card>
+              {customSources.map(feed => (
+                <CardItem button onPress={() => this.handleCustomSourceChange({ type: 'custom', name: `${feed.title}`, url: feed.url })} key={feed.url} style={{ elevation: 0, borderColor: '#fff' }}>
+                  <Thumbnail source={require('../../assets/images/iconnav.png')} />
+                  <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{feed.title}</Text>
+                </CardItem>
+              ))}
             </Content>
           </Tab>
         </Tabs>
+        <ActionButton
+          buttonColor="#1fcf7c"
+          onPress={() => navigation.navigate('AddSource')}
+        />
       </Container>
     );
   }

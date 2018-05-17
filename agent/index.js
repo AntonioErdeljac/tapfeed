@@ -38,78 +38,19 @@ const Feed = {
   }).then(data => clearSeen(data)),
 };
 
-const BBC = {
-  feed: () => axios({
+const CustomFeed = {
+  feed: url => axios({
     url: RSS.rss2json,
     method: 'GET',
     params: {
-      rss_url: RSS.BBC,
+      rss_url: url,
       api_key: API.rss2json,
       count: 100,
     },
   }).then(data => clearSeen(data)),
 };
 
-const washingtonPost = {
-  feed: () => axios({
-    url: RSS.rss2json,
-    method: 'GET',
-    params: {
-      rss_url: RSS.washingtonPost,
-      api_key: API.rss2json,
-      count: 100,
-    },
-  }).then(data => clearSeen(data)),
-};
-
-const independent = {
-  feed: () => axios({
-    url: RSS.rss2json,
-    method: 'GET',
-    params: {
-      rss_url: RSS.independent,
-      api_key: API.rss2json,
-      count: 100,
-    },
-  }).then(data => clearSeen(data)),
-};
-
-const techRadar = {
-  feed: () => axios({
-    url: RSS.rss2json,
-    method: 'GET',
-    params: {
-      rss_url: RSS.techRadar,
-      api_key: API.rss2json,
-      count: 100,
-    },
-  }).then(data => clearSeen(data)),
-};
-
-const FIFA = {
-  feed: () => axios({
-    url: RSS.rss2json,
-    method: 'GET',
-    params: {
-      rss_url: RSS.FIFA,
-      api_key: API.rss2json,
-      count: 100,
-    },
-  }).then(data => clearSeen(data)),
-};
-
-const businessWire = {
-  feed: () => axios({
-    url: RSS.rss2json,
-    method: 'GET',
-    params: {
-      rss_url: RSS.businessWire,
-      api_key: API.rss2json,
-      count: 100,
-    },
-  }).then(data => clearSeen(data)),
-};
 
 export default {
-  BBC, washingtonPost, independent, techRadar, FIFA, businessWire, Feed,
+  Feed, CustomFeed,
 };
