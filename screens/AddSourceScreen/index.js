@@ -12,6 +12,7 @@ import { Entypo } from '@expo/vector-icons';
 import { find } from 'lodash';
 import * as Animatable from 'react-native-animatable';
 
+import changeSource from '../LinksScreen/actions';
 import { loadFeed, loadSaved } from '../HomeScreen/actions';
 
 import Layout from '../../constants/Layout';
@@ -36,6 +37,7 @@ class AddSourceScreen extends React.Component {
 
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleSubmitSource = this.handleSubmitSource.bind(this);
+    this.handleCustomSourceChange = this.handleCustomSourceChange.bind(this);
   }
 
   componentWillMount() {
@@ -49,6 +51,22 @@ class AddSourceScreen extends React.Component {
   handleBackButtonClick() {
     this.props.navigation.navigate('Feed');
     return true;
+  }
+
+  handleCustomSourceChange(source) {
+    const {
+      onLoadFeed,
+      onChangeSource,
+      navigation,
+    } = this.props;
+
+
+    return AsyncStorage.setItem('savedSource', JSON.stringify(source))
+      .then(async () => onLoadFeed(Agent.CustomFeed.feed(source.url))
+        .then(() => {
+          onChangeSource(source);
+          navigation.navigate('Home');
+        }));
   }
 
   async handleSubmitSource() {
@@ -67,17 +85,19 @@ class AddSourceScreen extends React.Component {
           if (!sourceExists) {
             parsedSavedSources.push({ title: rssTitle, url: rssLink });
             return AsyncStorage.setItem('savedSources', JSON.stringify(parsedSavedSources))
-              .then(() => navigation.navigate('Feed'));
+              .then(() => this.handleCustomSourceChange({ type: 'custom', name: rssTitle, url: rssLink }));
           }
         }
         const sources = [];
         sources.push({ title: rssTitle, url: rssLink });
         return AsyncStorage.setItem('savedSources', JSON.stringify(sources))
-          .then(() => navigation.navigate('Feed'));
+          .then(() => this.handleCustomSourceChange({ type: 'custom', name: rssTitle, url: rssLink }));
       });
   }
 
   render() {
+    const { rssTitle, rssLink } = this.state;
+
     return (
       <Container style={{ paddingTop: 20, backgroundColor: '#fff' }}>
         <CardItem>
@@ -110,10 +130,10 @@ class AddSourceScreen extends React.Component {
         <Content>
           <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 30 }}>
             <Item regular style={{ width: Layout.window.width - 20, borderRadius: 5 }}>
-              <Input onChangeText={text => this.setState({ rssTitle: text })} placeholderTextColor="rgba(0,0,0,.3)" placeholder="Title" style={{ fontFamily: 'nunito-regular', borderRadius: 5 }} />
+              <Input value={rssTitle} onChangeText={text => this.setState({ rssTitle: text })} placeholderTextColor="rgba(0,0,0,.3)" placeholder="Title" style={{ fontFamily: 'nunito-regular', borderRadius: 5 }} />
             </Item>
             <Item regular style={{ width: Layout.window.width - 20, borderRadius: 5, marginTop: 15 }}>
-              <Input onChangeText={text => this.setState({ rssLink: text })} placeholderTextColor="rgba(0,0,0,.3)" placeholder="RSS link" style={{ fontFamily: 'nunito-regular', borderRadius: 5 }} />
+              <Input value={rssLink} onChangeText={text => this.setState({ rssLink: text })} placeholderTextColor="rgba(0,0,0,.3)" placeholder="RSS link" style={{ fontFamily: 'nunito-regular', borderRadius: 5 }} />
             </Item>
             <TouchableOpacity
               style={{
@@ -146,6 +166,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  onChangeSource: source => dispatch(changeSource(source)),
   onLoadFeed: payload => payload.then(data => dispatch(loadFeed(data))),
   onLoadSaved: cards => dispatch(loadSaved(cards)),
 });

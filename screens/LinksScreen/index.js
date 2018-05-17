@@ -207,7 +207,7 @@ class LinksScreen extends React.Component {
                   <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>Saved</Text>
                 </CardItem>
               </Card>
-              {customSources.map(feed => (
+              {customSources && customSources.map(feed => (
                 <CardItem button onPress={() => this.handleCustomSourceChange({ type: 'custom', name: `${feed.title}`, url: feed.url })} key={feed.url} style={{ elevation: 0, borderColor: '#fff' }}>
                   <Thumbnail source={require('../../assets/images/iconnav.png')} />
                   <Text style={{ color: 'rgba(0,0,0,.5)', fontFamily: 'nunito-regular', paddingLeft: 20 }}>{feed.title}</Text>
