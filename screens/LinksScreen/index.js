@@ -12,7 +12,7 @@ import { Entypo } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 
 import changeSource from './actions';
-import { loadFeed, loadSaved, saveCard } from '../HomeScreen/actions';
+import { loadFeed, loadSaved } from '../HomeScreen/actions';
 
 import Names from '../../constants/Names';
 import TabsPosition from '../../constants/TabsPosition';
@@ -111,7 +111,7 @@ class LinksScreen extends React.Component {
   }
 
   render() {
-    const { source, navigation } = this.props;
+    const { navigation } = this.props;
     const { activePage, customSources } = this.state;
 
     return (

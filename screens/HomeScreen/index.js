@@ -14,7 +14,6 @@ import { Entypo } from '@expo/vector-icons';
 import { find, remove } from 'lodash';
 import * as Animatable from 'react-native-animatable';
 
-
 import { saveCard, ignoreCard, loadSaved, loadFeed } from './actions';
 import { FeedCard, Empty } from './components';
 

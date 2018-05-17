@@ -14,8 +14,9 @@ import * as Animatable from 'react-native-animatable';
 
 import { loadFeed, loadSaved } from '../HomeScreen/actions';
 
-import Agent from '../../agent';
 import Layout from '../../constants/Layout';
+
+import Agent from '../../agent';
 
 const AnimatableThumbnail = Animatable.createAnimatableComponent(Thumbnail);
 
@@ -52,30 +53,31 @@ class AddSourceScreen extends React.Component {
 
   async handleSubmitSource() {
     const { rssLink, rssTitle } = this.state;
-    const { navigation } = this.props;
+    const { navigation, onLoadFeed } = this.props;
 
-    const savedSources = await AsyncStorage.getItem('savedSources');
+    onLoadFeed(Agent.CustomFeed.feed(rssLink))
+      .then(async () => {
+        const savedSources = await AsyncStorage.getItem('savedSources');
 
-    const parsedSavedSources = JSON.parse(savedSources);
+        const parsedSavedSources = JSON.parse(savedSources);
 
-    if (parsedSavedSources) {
-      const sourceExists = find(parsedSavedSources, { url: rssLink });
+        if (parsedSavedSources) {
+          const sourceExists = find(parsedSavedSources, { url: rssLink });
 
-      if (!sourceExists) {
-        parsedSavedSources.push({ title: rssTitle, url: rssLink });
-        return AsyncStorage.setItem('savedSources', JSON.stringify(parsedSavedSources))
+          if (!sourceExists) {
+            parsedSavedSources.push({ title: rssTitle, url: rssLink });
+            return AsyncStorage.setItem('savedSources', JSON.stringify(parsedSavedSources))
+              .then(() => navigation.navigate('Feed'));
+          }
+        }
+        const sources = [];
+        sources.push({ title: rssTitle, url: rssLink });
+        return AsyncStorage.setItem('savedSources', JSON.stringify(sources))
           .then(() => navigation.navigate('Feed'));
-      }
-    }
-    const sources = [];
-    sources.push({ title: rssTitle, url: rssLink });
-    return AsyncStorage.setItem('savedSources', JSON.stringify(sources))
-      .then(() => navigation.navigate('Feed'));
+      });
   }
 
   render() {
-    const { source, navigation } = this.props;
-
     return (
       <Container style={{ paddingTop: 20, backgroundColor: '#fff' }}>
         <CardItem>
@@ -152,8 +154,6 @@ AddSourceScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  onLoadFeed: PropTypes.func.isRequired,
-  onLoadSaved: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddSourceScreen);

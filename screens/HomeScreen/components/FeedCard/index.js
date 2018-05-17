@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { View, Image, Text } from 'react-native';
-import { CardItem, Body, Card, Badge, Thumbnail, Left } from 'native-base';
+import { CardItem, Body, Card, Thumbnail } from 'native-base';
 import { Entypo } from '@expo/vector-icons';
 
 import Layout from '../../../../constants/Layout';
 
 const FeedCard = (props) => {
-  const { cardData, sourceType } = props;
+  const { cardData } = props;
 
   let pic = 'https://www.rbs.ca/wp-content/themes/rbs/images/news-placeholder.png';
 
@@ -99,7 +99,6 @@ const FeedCard = (props) => {
 
 FeedCard.propTypes = {
   cardData: PropTypes.shape({}).isRequired,
-  sourceType: PropTypes.string.isRequired,
 };
 
 export default FeedCard;
